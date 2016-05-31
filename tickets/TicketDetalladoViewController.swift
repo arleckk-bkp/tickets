@@ -30,8 +30,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func obtenerTicket(id: String) -> NSDictionary{
         let semaphore = dispatch_semaphore_create(0)
-//        let jsonURL = "http://10.0.6.13/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
-        let jsonURL = "http://201.161.11.66/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
+        let jsonURL = "http://10.0.6.13/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
+//        let jsonURL = "http://201.161.11.66/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         var jsonData: NSDictionary = [:]
@@ -57,8 +57,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func atenderTicket(id: String)-> String {
         let semaphore = dispatch_semaphore_create(0)
-//        let jsonURL = "http://10.0.6.13/webservices/tickets/atender.php?id=\(id)"
-        let jsonURL = "http://201.161.11.66/webservices/tickets/atender.php?id=\(id)"
+        let jsonURL = "http://10.0.6.13/webservices/tickets/atender.php?id=\(id)"
+//        let jsonURL = "http://201.161.11.66/webservices/tickets/atender.php?id=\(id)"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         var msg: String = ""
@@ -85,8 +85,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func finalizarTicket(id: String, solucion: String) -> String {
         let semaphore = dispatch_semaphore_create(0)
-//        let jsonURL = "http://10.0.6.13/webservices/tickets/finalizar.php?id=\(id)&solucion=\(solucion)"
-        let jsonURL = "http://201.161.11.66/webservices/tickets/finalizar.php"
+        let jsonURL = "http://10.0.6.13/webservices/tickets/finalizar.php"
+//        let jsonURL = "http://201.161.11.66/webservices/tickets/finalizar.php"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         let request = NSMutableURLRequest(URL: shorURL!)
@@ -152,11 +152,9 @@ class TicketDetalladoViewController: UIViewController {
         if finalizar! == "success" {
 //            cambiarEstado()
             let usuario = ticket["usuario"]!
-            
             socket.emit("ticket_atendido", usuario)
             btnFinalizar.enabled = false
-            imagenEstatus.image = UIImage(named: "amarillo")
-            
+            imagenEstatus.image = UIImage(named: "verde")
         } else {
             print("ocurrio un error en atender")
         }

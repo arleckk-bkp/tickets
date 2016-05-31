@@ -184,6 +184,11 @@
 					BAC575F71CEF779F00834357 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = PU945WFYHN;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

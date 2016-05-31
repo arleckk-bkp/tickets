@@ -31,7 +31,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 ticket.append(d as! [String : String])
             }
             
-            let mensajeTicket: String = "\(ticket[0]["usuario"]!): \(ticket[0]["problema"]!)"
+            let mensajeTicket: String = "\(ticket[0]["validador"]!): \(ticket[0]["problema"]!)"
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 UIView.transitionWithView(self.view,
@@ -117,8 +117,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        self.notificacion("nuevo ticket")
-        
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         let next = self.storyboard?.instantiateViewControllerWithIdentifier("ticketDetallado") as! TicketDetalladoViewController
@@ -156,8 +154,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //obtener orden estatus y prioridad webservices
     func obtenerTickets() {
         let semaphore = dispatch_semaphore_create(0);
-//        let jsonUrl = "http://10.0.6.13/webservices/tickets/lista-tickets.php"
-        let jsonUrl = "http://201.161.11.66/webservices/tickets/lista-tickets.php"
+        let jsonUrl = "http://10.0.6.13/webservices/tickets/lista-tickets.php"
+//        let jsonUrl = "http://201.161.11.66/webservices/tickets/lista-tickets.php"
         let session = NSURLSession.sharedSession()
         let shotsUrl = NSURL(string: jsonUrl)
         let task = session.dataTaskWithURL(shotsUrl!) {
