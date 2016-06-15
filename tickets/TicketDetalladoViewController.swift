@@ -12,8 +12,8 @@ class TicketDetalladoViewController: UIViewController {
 
     var idOrden: String?
     var ticket: NSDictionary = [:]
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.0.6.13:4000")!, options: [.Log(true), .ForcePolling(true)])
-//    let socket = SocketIOClient(socketURL: NSURL(string: "http://201.161.11.66:4000")!, options: [.Log(true), .ForcePolling(true)])
+//    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.0.6.13:4000")!, options: [.Log(true), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://201.161.11.66:4000")!, options: [.Log(true), .ForcePolling(true)])
     
     @IBOutlet weak var prioridad: UILabel!
     @IBOutlet weak var imagenPrioridad: UIImageView!
@@ -30,8 +30,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func obtenerTicket(id: String) -> NSDictionary{
         let semaphore = dispatch_semaphore_create(0)
-        let jsonURL = "http://10.0.6.13/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
-//        let jsonURL = "http://201.161.11.66/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
+//        let jsonURL = "http://10.0.6.13/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
+        let jsonURL = "http://201.161.11.66/webservices/tickets/obtener-detalles-ticket.php?id=\(id)"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         var jsonData: NSDictionary = [:]
@@ -57,8 +57,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func atenderTicket(id: String)-> String {
         let semaphore = dispatch_semaphore_create(0)
-        let jsonURL = "http://10.0.6.13/webservices/tickets/atender.php?id=\(id)"
-//        let jsonURL = "http://201.161.11.66/webservices/tickets/atender.php?id=\(id)"
+//        let jsonURL = "http://10.0.6.13/webservices/tickets/atender.php?id=\(id)"
+        let jsonURL = "http://201.161.11.66/webservices/tickets/atender.php?id=\(id)"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         var msg: String = ""
@@ -85,8 +85,8 @@ class TicketDetalladoViewController: UIViewController {
     
     func finalizarTicket(id: String, solucion: String) -> String {
         let semaphore = dispatch_semaphore_create(0)
-        let jsonURL = "http://10.0.6.13/webservices/tickets/finalizar.php"
-//        let jsonURL = "http://201.161.11.66/webservices/tickets/finalizar.php"
+//        let jsonURL = "http://10.0.6.13/webservices/tickets/finalizar.php"
+        let jsonURL = "http://201.161.11.66/webservices/tickets/finalizar.php"
         let session = NSURLSession.sharedSession()
         let shorURL = NSURL(string: jsonURL)
         let request = NSMutableURLRequest(URL: shorURL!)
@@ -166,50 +166,63 @@ class TicketDetalladoViewController: UIViewController {
     }
 
     override func viewWillAppear(animated: Bool) {
+        
+        if Reachability.isConnectedToNetwork() == true {
+            socket.connect()
+            
+            ticket = obtenerTicket(idOrden!)
+            
+            //imagenes
+            var imgEstado: String = ""
+            var imgPrioridad: String = ""
+            
+            if String(ticket["estatus"]!) == "NO ATENDIDO" {
+                imgEstado = "azul"
+                btnAtender.enabled = true
+                btnFinalizar.enabled = false
+            } else if String(ticket["estatus"]!) == "EN PROCESO" {
+                imgEstado = "amarillo"
+                btnAtender.enabled = false
+                btnFinalizar.enabled = true
+            } else {
+                imgEstado = "verde"
+                btnAtender.enabled = false
+                btnFinalizar.enabled = false
+            }
+            
+            if String(ticket["prioridad"]!) == "BAJA" {
+                imgPrioridad = "verde"
+            } else if String(ticket["prioridad"]!) == "MEDIA" {
+                imgPrioridad = "amarillo"
+            } else {
+                imgPrioridad = "rojo"
+            }
+            
+            imagenEstatus.image = UIImage(named: imgEstado)
+            imagenPrioridad.image = UIImage(named: imgPrioridad)
+            
+            estatus.text = String(ticket["estatus"]!)
+            prioridad.text = String(ticket["prioridad"]!)
+            tipo.text = "TIPO: \(String(ticket["tipo"]!))"
+            subtipo.text = "SUBTIPO: \(String(ticket["subtipo"]!))"
+            usuario.text = "USUARIO: \(String(ticket["usuario"]!))"
+            validador.text = "VALIDADOR: \(String(ticket["validador"]!))"
+            comentarioTicket.text = String(ticket["comentario"]!)
+            comentarioSistemas.text = String(ticket["solucion"]!)
+            
+//            print("El id enviado es: \(idOrden!)")
+        } else {
+//            print("Internet connection FAILED")
+            let alert = UIAlertController(title: "No Internet Connection", message: "Ahorita no joven, cuando tenga Internet me avisa", preferredStyle: UIAlertControllerStyle.Alert)
+            let OKAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {(action) in NSLog("No Internet Connection")})
+            alert.addAction(OKAction)
+            self.presentViewController(alert, animated: true, completion: {})
+        }
+        
         super.viewWillAppear(animated)
-        socket.connect()
         
-        ticket = obtenerTicket(idOrden!)
         
-        //imagenes
-        var imgEstado: String = ""
-        var imgPrioridad: String = ""
         
-        if String(ticket["estatus"]!) == "NO ATENDIDO" {
-            imgEstado = "azul"
-            btnAtender.enabled = true
-            btnFinalizar.enabled = false
-        } else if String(ticket["estatus"]!) == "EN PROCESO" {
-            imgEstado = "amarillo"
-            btnAtender.enabled = false
-            btnFinalizar.enabled = true
-        } else {
-            imgEstado = "verde"
-            btnAtender.enabled = false
-            btnFinalizar.enabled = false
-        }
-        
-        if String(ticket["prioridad"]!) == "BAJA" {
-            imgPrioridad = "verde"
-        } else if String(ticket["prioridad"]!) == "MEDIA" {
-            imgPrioridad = "amarillo"
-        } else {
-            imgPrioridad = "rojo"
-        }
-        
-        imagenEstatus.image = UIImage(named: imgEstado)
-        imagenPrioridad.image = UIImage(named: imgPrioridad)
-        
-        estatus.text = String(ticket["estatus"]!)
-        prioridad.text = String(ticket["prioridad"]!)
-        tipo.text = "TIPO: \(String(ticket["tipo"]!))"
-        subtipo.text = "SUBTIPO: \(String(ticket["subtipo"]!))"
-        usuario.text = "USUARIO: \(String(ticket["usuario"]!))"
-        validador.text = "VALIDADOR: \(String(ticket["validador"]!))"
-        comentarioTicket.text = String(ticket["comentario"]!)
-        comentarioSistemas.text = String(ticket["solucion"]!)
-        
-        print("El id enviado es: \(idOrden!)")
     }
     
     override func didReceiveMemoryWarning() {

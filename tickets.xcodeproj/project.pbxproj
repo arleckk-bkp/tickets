@@ -38,6 +38,7 @@
 		BAC576031CEF77A000834357 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BAC576021CEF77A000834357 /* Assets.xcassets */; };
 		BAC576061CEF77A000834357 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BAC576041CEF77A000834357 /* LaunchScreen.storyboard */; };
 		BAC576101CEF91C400834357 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC5760F1CEF91C400834357 /* CustomCell.swift */; };
+		BACFFDDE1D11B6210064967A /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BACFFDDD1D11B6210064967A /* Reachability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,7 @@
 		BAC576051CEF77A000834357 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BAC576071CEF77A000834357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BAC5760F1CEF91C400834357 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
+		BACFFDDD1D11B6210064967A /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 				BAC576021CEF77A000834357 /* Assets.xcassets */,
 				BAC576041CEF77A000834357 /* LaunchScreen.storyboard */,
 				BAC576071CEF77A000834357 /* Info.plist */,
+				BACFFDDD1D11B6210064967A /* Reachability.swift */,
 			);
 			path = tickets;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 				BAC576101CEF91C400834357 /* CustomCell.swift in Sources */,
 				BA90BE411CF382C900D872B9 /* SocketAnyEvent.swift in Sources */,
 				BA90BE4E1CF382C900D872B9 /* SocketPacket.swift in Sources */,
+				BACFFDDE1D11B6210064967A /* Reachability.swift in Sources */,
 				BA90BE431CF382C900D872B9 /* SocketEngineClient.swift in Sources */,
 				BAC575FC1CEF779F00834357 /* AppDelegate.swift in Sources */,
 				BA90BE541CF382C900D872B9 /* WebSocket.swift in Sources */,

@@ -15,50 +15,66 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var diccionario: [String:String] = [:]
     var diccionarios = [[String:String]]()
     var id: Int = 0
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.0.6.13:4000")!, options: [.Log(false), .ForcePolling(true)])
-//    let socket = SocketIOClient(socketURL: NSURL(string: "http://201.161.11.66:4000")!, options: [.Log(false), .ForcePolling(true)])
+    var socket: SocketIOClient!
+    
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
-        socket.connect()
         
-        socket.on("nuevo_ticket") {data, ack in
-            self.obtenerTickets()
-            var ticket = [[String:String]]()
+        if Reachability.isConnectedToNetwork() == true {
+            socket = SocketIOClient(socketURL: NSURL(string: "http://201.161.11.66:4000")!, options: [.Log(false), .ForcePolling(true)])
+            //    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.0.6.13:4000")!, options: [.Log(false), .ForcePolling(true)])
+            print("Internet connection OK")
+            socket.connect()
             
-            for d in data {
-                ticket.append(d as! [String : String])
+            socket.on("nuevo_ticket") {data, ack in
+                self.obtenerTickets()
+                var ticket = [[String:String]]()
+                
+                for d in data {
+                    ticket.append(d as! [String : String])
+                }
+                
+                let mensajeTicket: String = "\(ticket[0]["validador"]!): \(ticket[0]["problema"]!)"
+                
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    UIView.transitionWithView(self.view,
+                        duration: 0.15, options: [.CurveEaseInOut, .TransitionCrossDissolve],
+                        animations: { () -> Void in
+                            self.notificacion("\(mensajeTicket)")
+                            self.tableView.reloadData()
+                        }, completion: nil)
+                })
             }
             
-            let mensajeTicket: String = "\(ticket[0]["validador"]!): \(ticket[0]["problema"]!)"
+            socket.on("atendiendo") {data, act in
+                self.obtenerTickets()
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.tableView.reloadData()
+                })
+            }
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                UIView.transitionWithView(self.view,
-                    duration: 0.15, options: [.CurveEaseInOut, .TransitionCrossDissolve],
-                    animations: { () -> Void in
-                        self.notificacion("\(mensajeTicket)")
-                        self.tableView.reloadData()
-                    }, completion: nil)
-            })
+            socket.on("ticket_atendido_sistemas") {data, act in
+                self.obtenerTickets()
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.tableView.reloadData()
+                })
+            }
+            
+            obtenerTickets()
+        } else {
+            print("Internet connection FAILED")
+//            let alert = UIAlertView(title: "No Internet Connection", message: "Ahorita no joven, cuando tenga Internet me avisa", delegate: <#T##AnyObject?#>, cancelButtonTitle: "OK")
+            let alert = UIAlertController(title: "No Internet Connection", message: "Ahorita no joven, cuando tenga Internet me avisa", preferredStyle: UIAlertControllerStyle.Alert)
+            let OKAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {(action) in NSLog("No Internet Connection")})
+            alert.addAction(OKAction)
+            self.presentViewController(alert, animated: true, completion: {})
+//            alert.show()
         }
         
-        socket.on("atendiendo") {data, act in
-            self.obtenerTickets()
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.tableView.reloadData()
-            })
-        }
-        
-        socket.on("ticket_atendido_sistemas") {data, act in
-            self.obtenerTickets()
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.tableView.reloadData()
-            })
-        }
-        
-        obtenerTickets()
         super.viewDidLoad()
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -154,8 +170,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //obtener orden estatus y prioridad webservices
     func obtenerTickets() {
         let semaphore = dispatch_semaphore_create(0);
-        let jsonUrl = "http://10.0.6.13/webservices/tickets/lista-tickets.php"
-//        let jsonUrl = "http://201.161.11.66/webservices/tickets/lista-tickets.php"
+//        let jsonUrl = "http://10.0.6.13/webservices/tickets/lista-tickets.php"
+        let jsonUrl = "http://201.161.11.66/webservices/tickets/lista-tickets.php"
         let session = NSURLSession.sharedSession()
         let shotsUrl = NSURL(string: jsonUrl)
         let task = session.dataTaskWithURL(shotsUrl!) {
