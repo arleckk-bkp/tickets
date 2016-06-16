@@ -136,8 +136,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         let next = self.storyboard?.instantiateViewControllerWithIdentifier("ticketDetallado") as! TicketDetalladoViewController
-        next.idOrden = diccionarios[indexPath.row]["id"]
-        
+        if(diccionarios.count > 0) {
+            next.idOrden = diccionarios[indexPath.row]["id"]
+        } else {
+            next.idOrden = ""
+        }
         self.navigationController?.pushViewController(next, animated: true)
         
     }
